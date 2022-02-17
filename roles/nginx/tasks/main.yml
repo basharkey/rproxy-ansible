@@ -1,0 +1,9 @@
+---
+- name: Install nginx and certbot
+  apt:
+    name:
+      - nginx
+      - certbot
+      - python3-certbot-nginx
+      - python3-certbot-dns-route53
+    state: latest

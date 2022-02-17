@@ -1,0 +1,36 @@
+---
+- name: Install aws-ddns script
+  get_url:
+    url: https://raw.githubusercontent.com/basharkey/aws-ddns/main/aws-ddns.py
+    dest: /usr/local/bin/aws-ddns
+    mode: 0755
+    force: yes
+
+- name: Get aws-ddns script requirements
+  get_url:
+    url: https://raw.githubusercontent.com/basharkey/aws-ddns/main/requirements.txt
+    dest: /tmp/requirements.txt
+    mode: 0755
+
+- name: Install aws-ddns script requirements
+  pip:
+    requirements: /tmp/requirements.txt
+
+- name: Template aws-ddns service and timer
+  template:
+    src: "{{ item }}.j2"
+    dest: "/etc/systemd/system/{{ item }}"
+    mode: 0755
+  loop:
+    - aws-ddns.service
+    - aws-ddns.timer
+
+- name: Systemd daemon reload
+  systemd:
+    daemon_reload: yes
+
+- name: Enable aws-ddns timer
+  systemd:
+    name: aws-ddns.timer
+    state: started
+    enabled: yes

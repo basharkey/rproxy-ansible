@@ -1,0 +1,12 @@
+[Unit]
+Description=AWS DDNS
+After=network-online.target
+Wants=network-online.target
+Wants=aws-ddns.timer
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/aws-ddns --record {{ aws_record_name }} --hosted-zone-id {{ aws_hosted_zone_id }}
+
+[Install]
+WantedBy=multi-user.target
