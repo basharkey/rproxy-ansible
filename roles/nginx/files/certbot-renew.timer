@@ -1,0 +1,9 @@
+[Unit]
+Description=certbot-renew timer
+
+[Timer]
+Unit=certbot-renew.service
+OnCalendar=daily
+
+[Install]
+WantedBy=timers.target

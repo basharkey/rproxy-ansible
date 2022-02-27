@@ -3,6 +3,8 @@
   become: yes
 
   roles:
-    #- aws-cli
-    #- aws-ddns
+    - aws-cli
+    - aws-ddns
     - nginx
+    - firewall
+    - auto-update
