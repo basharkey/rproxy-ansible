@@ -7,3 +7,54 @@
       - python3-certbot-nginx
       - python3-certbot-dns-route53
     state: latest
+
+- name: Copy nginx base config
+  copy:
+    src: nginx.conf
+    dest: /etc/nginx/nginx.conf
+    mode: 0644
+
+- name: Enable systemd-resolved
+  systemd:
+    name: systemd-resolved.service
+    state: started
+    enabled: yes
+
+- name: Copy nginx https redirect config
+  copy:
+    src: https-redirect.conf
+    dest: /etc/nginx/conf.d/https-redirect.conf
+    mode: 0644
+
+- name: Template reverse proxy sites
+  template:
+    src: site.conf.j2
+    dest: "/etc/nginx/conf.d/{{ item.sub_domain }}.conf"
+    mode: 0644
+    force: yes
+  loop: "{{ sites }}"
+
+- name: Update hosts file for reverse proxy sites
+  lineinfile:
+    path: /etc/hosts
+    line: "{{ item.hosts_entry }} {{ item.sub_domain }}.{{ domain }}"
+    state: present
+  loop: "{{ sites }}"
+
+- name: Make nginx ssl directory
+  file:
+    path: /etc/nginx/ssl/
+    state: directory
+    mode: 0755
+
+- name: Copy ssl_verify_client ca cert
+  copy:
+    src: ca.crt
+    dest: /etc/nginx/ssl/ca.crt
+    mode: 0644
+
+- name: Reload and enable nginx
+  systemd:
+    name: nginx.service
+    state: reloaded
+    enabled: yes

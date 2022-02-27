@@ -1,0 +1,16 @@
+server {
+    listen 443 ssl;
+    server_name {{ item.sub_domain ~ '.' ~ domain}};
+
+    ssl_certificate /etc/letsencrypt/live/{{ domain }}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/{{ domain }}/privkey.pem;
+
+{% if item.ssl_verify_client is defined and item.ssl_verify_client %}
+    ssl_client_certificate /etc/nginx/ssl/ca.crt;
+    ssl_verify_client on;
+{% endif %}
+
+    location / {
+        proxy_pass {{ item.proxy_pass }};
+    }
+}
