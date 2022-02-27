@@ -1,0 +1,9 @@
+[Unit]
+Description=Monthly apt package update
+
+[Timer]
+Unit=apt-update.service
+OnCalendar=*-*-01 05:00:00
+
+[Install]
+WantedBy=timers.target

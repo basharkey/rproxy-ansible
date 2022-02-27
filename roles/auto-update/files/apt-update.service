@@ -1,0 +1,12 @@
+[Unit]
+Description=Updates apt packages
+After=network-online.target
+Wants=network-online.target
+Wants=apt-update.timer
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/apt-update.sh
+
+[Install]
+WantedBy=multi-user.target
