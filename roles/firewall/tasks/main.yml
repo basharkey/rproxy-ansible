@@ -1,0 +1,12 @@
+---
+- name: Copy firewall configuration
+  copy:
+    src: nftables.conf
+    dest: /etc/nftables.conf
+    mode: 0755
+
+- name: Restart and enable nftables
+  systemd:
+    name: nftables
+    state: restarted
+    enabled: yes
