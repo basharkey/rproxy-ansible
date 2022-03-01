@@ -13,4 +13,5 @@ server {
     location / {
         proxy_pass {{ item.proxy_pass }};
     }
+    return 404;
 }
