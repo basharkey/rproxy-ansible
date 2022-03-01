@@ -12,6 +12,11 @@
     dest: /tmp/requirements.txt
     mode: 0755
 
+- name: Install pip3
+  apt:
+    name: python3-pip
+    state: latest
+
 - name: Install aws-ddns script requirements
   pip:
     requirements: /tmp/requirements.txt
