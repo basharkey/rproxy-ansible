@@ -56,6 +56,16 @@
     dest: /etc/nginx/ssl/ca.crt
     mode: 0644
 
+- name: Copy custom nginx service file
+  copy:
+    src: nginx.service
+    dest: /etc/systemd/system/nginx.service
+    modes: 0644
+
+- name: Systemd daemon-reload
+  systemd:
+    daemon_reload: yes
+
 - name: Reload and enable nginx
   systemd:
     name: nginx.service
