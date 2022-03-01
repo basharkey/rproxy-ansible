@@ -56,5 +56,5 @@
 - name: Reload and enable nginx
   systemd:
     name: nginx.service
-    state: reloaded
+    state: restarted
     enabled: yes
