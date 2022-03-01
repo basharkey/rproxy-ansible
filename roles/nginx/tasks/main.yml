@@ -15,7 +15,7 @@
     mode: 0644
 
 - name: Obtain letsencrypt certificate
-  command: "certbot certonly --dns-route53 -d *.{{ domain }} -m {{ letsencrypt_email }} --no-eff-email --agree-tos"
+  command: "certbot certonly --dns-route53 -d *.{{ domain }} -m {{ letsencrypt_email }} --no-eff-email --agree-tos -n"
 
 - name: Enable systemd-resolved
   systemd:
