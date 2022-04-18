@@ -1,0 +1,15 @@
+[Interface]
+# Address of vpn server on vpn subnet
+Address = {{ wireguard_server_address }}/24
+ListenPort = {{ wireguard_server_port }}
+PrivateKey = {{ wireguard_server_private_key }}
+PostUp = nft add rule inet filter forward iifname %i accept; nft add rule inet filter forward oifname %i accept; nft add rule ip nat postrouting oifname {{ ansible_default_ipv4.interface }} masquerade
+PostDown = nft -f /etc/nftables.conf
+{% for client in wireguard_clients %}
+
+[Peer]
+# {{ client.name }}
+# IP(s) peer is allowed to assume
+AllowedIPs = {{ client.address }}/32
+PublicKey = {{ client.public_key }}
+{% endfor %}

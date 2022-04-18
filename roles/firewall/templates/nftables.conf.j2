@@ -5,9 +5,11 @@ flush ruleset
 table inet filter {
     chain input {
         type filter hook input priority 0; policy drop;
+        icmp type echo-request accept
         tcp dport 22 accept
         tcp dport 80 accept
         tcp dport 443 accept
+        udp dport {{ wireguard_server_port }} accept
         ct state related,established accept
     }
     chain forward {
@@ -15,5 +17,11 @@ table inet filter {
     }
     chain output {
         type filter hook output priority 0; policy accept;
+    }
+}
+
+table ip nat {
+    chain postrouting {
+        type nat hook postrouting priority srcnat; policy drop;
     }
 }

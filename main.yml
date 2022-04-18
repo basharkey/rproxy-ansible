@@ -8,3 +8,4 @@
     - nginx
     - firewall
     - auto-update
+    - wireguard
