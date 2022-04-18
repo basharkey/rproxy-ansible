@@ -60,7 +60,7 @@
   copy:
     src: nginx.service
     dest: /etc/systemd/system/nginx.service
-    modes: 0644
+    mode: 0644
 
 - name: Systemd daemon-reload
   systemd:

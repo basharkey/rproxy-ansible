@@ -16,7 +16,6 @@
 - name: Systemd daemon-reload
   systemd:
     daemon_reload: yes
-  become: yes
 
 - name: Enable apt-update.timer
   systemd:
