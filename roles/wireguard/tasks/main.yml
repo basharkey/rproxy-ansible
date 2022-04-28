@@ -15,7 +15,7 @@
   register: publickey
 
 - name: Check if wireguard server private key file exists
-- when: not privatekey.stat.exists
+  when: not privatekey.stat.exists
   block:
     - name: Generate wireguard server private key
       command: wg genkey
