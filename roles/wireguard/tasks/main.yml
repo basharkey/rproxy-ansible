@@ -60,21 +60,23 @@
 
 - name: Create wireguard client config directory
   file:
-    path: /etc/wireguard/clients/
+    path: "/etc/wireguard/clients/{{ item.name  }}"
     state: directory
     mode: 0700
+    recurse: yes
+  loop:  "{{ wireguard_clients }}"
 
 - name: Generate wireguard client keys
-  loop: "{{ wireguard_clients }}"
   include_tasks: generate-client-keys.yml
+  loop: "{{ wireguard_clients }}"
 
 - name: Template wireguard client configs
-  loop: "{{ wireguard_clients }}"
   template:
     src: wg0-client.conf.j2
-    dest: "/etc/wireguard/clients/{{ item.name }}-wg0.conf"
+    dest: "/etc/wireguard/clients/{{ item.name }}/wg0.conf"
     mode: 0644
     force: yes
+  loop: "{{ wireguard_clients }}"
 
 - name: Template wireguard server config
   template:
