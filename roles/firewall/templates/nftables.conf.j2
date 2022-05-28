@@ -5,6 +5,7 @@ flush ruleset
 table inet filter {
     chain input {
         type filter hook input priority 0; policy drop;
+        iif "lo" accept
         icmp type echo-request accept
         tcp dport 22 accept
         tcp dport 80 accept
@@ -22,6 +23,6 @@ table inet filter {
 
 table ip nat {
     chain postrouting {
-        type nat hook postrouting priority srcnat; policy drop;
+        type nat hook postrouting priority srcnat; policy accept;
     }
 }
