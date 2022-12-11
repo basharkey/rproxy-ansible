@@ -2,61 +2,24 @@
 - name: Install wireguard
   apt:
     name: wireguard
-    state: latest
+    state: present
 
-- name: Stat wireguard server private key file
-  stat:
-    path: /etc/wireguard/privatekey
-  register: privatekey
-
-- name: Stat wireguard server public key file
-  stat:
-    path: /etc/wireguard/publickey
-  register: publickey
-
-- name: Check if wireguard server private key file exists
-  when: not privatekey.stat.exists
+- name: Create wireguard server private key
+  when: wireguard_sever_private_key is not defined
   block:
     - name: Generate wireguard server private key
       command: wg genkey
-      register: result
+      register: wireguard_server_private_key
 
-    - name: Create wireguard server private key file
-      copy:
-        content: "{{ result.stdout }}"
-        dest: /etc/wireguard/privatekey
+    - set_fact:
+        wireguard_server_private_key: wireguard_server_private_key.result
 
-- name: Check if wireguard server public key file exists
-  when: not publickey.stat.exists
-  block:
-    - name: Generate wireguard server public key
-      shell: cat /etc/wireguard/privatekey | wg pubkey
-      register: result
+- name: Generate wireguard server public key
+  shell: "echo {{ wireguard_server_private_key }} | wg pubkey"
+  register: wireguard_server_public_key
 
-    - name: Create wireguard server public key file
-      copy:
-        content: "{{ result.stdout }}"
-        dest: /etc/wireguard/publickey
-
-
-- name: Load wireguard server private key from file
-  slurp:
-    src: /etc/wireguard/privatekey
-  register: result
-
-- name: Set wireguard server private key var
-  set_fact:
-    wireguard_server_private_key: "{{ result.content | b64decode | trim }}"
-
-- name: Load wireguard server public key from file
-  slurp:
-    src: /etc/wireguard/publickey
-  register: result
-
-- name: Set wireguard server public key var
-  set_fact:
-    wireguard_server_public_key: "{{ result.content | b64decode | trim }}"
-
+- set_fact:
+    wireguard_server_public_key: wireguard_server_public_key.result
 
 - name: Create wireguard client config directory
   file:
@@ -75,7 +38,6 @@
     src: wg0-client.conf.j2
     dest: "/etc/wireguard/clients/{{ item.name }}/wg0.conf"
     mode: 0644
-    force: yes
   loop: "{{ wireguard_clients }}"
 
 - name: Template wireguard server config
@@ -83,7 +45,6 @@
     src: wg0-server.conf.j2
     dest: /etc/wireguard/wg0.conf
     mode: 0644
-    force: yes
 
 - name: Enable IP forwarding
   sysctl:
@@ -93,12 +54,9 @@
     state: present
     reload: yes
 
-- name: Systemd daemon-reload
-  systemd:
-    daemon_reload: yes
-
 - name: Start and enable wireguard server systemd sevice
   systemd:
+    daemon_reload: yes
     name: wg-quick@wg0.service
     state: restarted
     enabled: yes

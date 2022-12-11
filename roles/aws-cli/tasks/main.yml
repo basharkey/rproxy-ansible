@@ -1,17 +1,19 @@
 ---
 - name: Check if aws cli is installed
-  block:
-    - name: Check for aws binary
-      command: which aws
+  stat:
+    path: /usr/local/bin/aws
+  register: aws_cli
 
-  rescue:
-    - name: Download and unzip arm aws cli
+- name: Install aws cli
+  when: not aws_cli.stat.exists
+  block:
+    - name: Download and unzip aws cli
       unarchive:
-        src: https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip
+        src: https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip
         dest: /tmp/
         remote_src: yes
 
-    - name: Install aws cli
+    - name: Run aws cli install script
       command: /tmp/aws/install
 
 - name: Create aws cli config dir
@@ -25,4 +27,3 @@
     src: credentials.j2
     dest: /root/.aws/credentials
     mode: 0600
-    force: yes

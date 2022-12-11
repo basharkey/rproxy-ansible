@@ -4,45 +4,44 @@
     name:
       - nginx
       - certbot
-      - python3-certbot-nginx
       - python3-certbot-dns-route53
-    state: latest
+    state: present
 
-- name: Copy nginx base config
+- name: Obtain letsencrypt certificate
+  command: "certbot certonly --dns-route53 -d *.{{ domain }} -m {{ letsencrypt_email }} --no-eff-email --agree-tos -n"
+
+- name: Copy base nginx.conf
   copy:
     src: nginx.conf
     dest: /etc/nginx/nginx.conf
     mode: 0644
 
-- name: Obtain letsencrypt certificate
-  command: "certbot certonly --dns-route53 -d *.{{ domain }} -m {{ letsencrypt_email }} --no-eff-email --agree-tos -n"
-
-- name: Enable systemd-resolved
-  systemd:
-    name: systemd-resolved.service
-    state: started
-    enabled: yes
-
-- name: Copy nginx https redirect config
+- name: Copy nginx letsencrypt.conf
   copy:
-    src: https-redirect.conf
-    dest: /etc/nginx/conf.d/https-redirect.conf
+    src: letsencrypt.conf
+    dest: /etc/nginx/letsencrypt.conf
     mode: 0644
 
-- name: Template reverse proxy sites
+- name: Template sites nginx config
   template:
     src: site.conf.j2
-    dest: "/etc/nginx/conf.d/{{ item.sub_domain }}.conf"
+    dest: "/etc/nginx/conf.d/{{ site.sub_domain }}.conf"
     mode: 0644
-    force: yes
   loop: "{{ sites }}"
+  loop_control:
+    loop_var: site
 
-- name: Update hosts file for reverse proxy sites
+- name: Remove sites from hosts file
   lineinfile:
     path: /etc/hosts
-    line: "{{ item.hosts_entry }} {{ item.sub_domain }}.{{ domain }}"
-    state: present
+    regexp: ".*# rproxy managed$"
+    state: absent
+
+- name: Add sites to hosts file
+  include_tasks: add-site.yml
   loop: "{{ sites }}"
+  loop_control:
+    loop_var: site
 
 - name: Make nginx ssl directory
   file:
@@ -62,12 +61,15 @@
     dest: /etc/systemd/system/nginx.service
     mode: 0644
 
-- name: Systemd daemon-reload
+- name: Start and enable systemd-resolved service
+  systemd:
+    name: systemd-resolved.service
+    state: started
+    enabled: yes
+
+- name: Restart and enable nginx service
   systemd:
     daemon_reload: yes
-
-- name: Reload and enable nginx
-  systemd:
     name: nginx.service
     state: restarted
     enabled: yes

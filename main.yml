@@ -7,5 +7,4 @@
     - aws-ddns
     - nginx
     - firewall
-    - auto-update
     - wireguard

@@ -1,8 +1,7 @@
 [Unit]
-Description=AWS DDNS
+Description=Update AWS dynamic DNS record
 After=network-online.target
 Wants=network-online.target
-Wants=aws-ddns.timer
 
 [Service]
 Type=simple
