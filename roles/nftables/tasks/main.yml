@@ -1,5 +1,5 @@
 ---
-- name: Template firewall configuration
+- name: Template nftables.conf
   template:
     src: nftables.conf.j2
     dest: /etc/nftables.conf

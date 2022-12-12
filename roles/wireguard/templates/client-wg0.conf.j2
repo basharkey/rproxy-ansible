@@ -1,10 +1,10 @@
 [Interface]
 # IP client assumes on connection
-Address = {{ item.address }}/24
-PrivateKey = {{ item.private_key }}
+Address = {{ client.address }}/24
+PrivateKey = {{ client.private_key }}
 
 [Peer]
 # what IP(s) are routed through the vpn
-AllowedIPs = {{ item.allowed_ips }}
+AllowedIPs = {{ client.allowed_ips }}
 Endpoint = {{ wireguard_server_sub_domain }}.{{ domain }}:{{ wireguard_server_port }}
 PublicKey = {{ wireguard_server_public_key }}

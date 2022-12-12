@@ -1,59 +1,27 @@
 ---
-- name: Stat wireguard client private key file
-  stat:
-    path: "/etc/wireguard/clients/{{ item.name }}/privatekey"
-  register: privatekey
-
-- name: Stat wireguard client public key file
-  stat:
-    path: "/etc/wireguard/clients/{{ item.name }}/publickey"
-  register: publickey
-
-- name: Check if wireguard client private key file exists
-  when: not privatekey.stat.exists
+- name: "Create {{ client }} wireguard  private key"
+  when: wireguard_sever_private_key is not defined
   block:
-    - name: Generate wireguard client private key
+    - name: "Generate {{ client }} wireguard private key"
       command: wg genkey
-      register: result
+      register: private_key
+    - set_fact:
+        private_key: private_key.result
 
-    - name: Create wireguard client private key file
-      copy:
-        content: "{{ result.stdout }}"
-        dest: "/etc/wireguard/clients/{{ item.name }}/privatekey"
+    - name: "Set {{ client }} wireguard private key var"
+      set_fact:
+        wireguard_clients: "{{ wireguard_clients
+          | rejectattr('name', 'equalto', client.name)
+          | list + [ item | combine({ 'private_key': private_key }) ] }}"
 
-- name: Check if wireguard client public key file exists
-  when: not publickey.stat.exists
-  block:
-    - name: Generate wireguard client public key
-      shell: "cat /etc/wireguard/clients/{{ item.name }}/privatekey | wg pubkey"
-      register: result
+- name: "Generate {{ client }} wireguard public key"
+  shell: "echo {{ client.private_key }} | wg pubkey"
+  register: public_key
+- set_fact:
+    public_key: public_key.result
 
-    - name: Create wireguard client public key file
-      copy:
-        content: "{{ result.stdout }}"
-        dest: "/etc/wireguard/clients/{{ item.name }}/publickey"
-
-- name: Load wireguard client private key from file
-  slurp:
-    src: "/etc/wireguard/clients/{{ item.name }}/privatekey"
-  register: result
-
-- name: Set wireguard client private key var
-  set_fact:
-    privatekey: "{{ result.content | b64decode | trim }}"
-
-- name: Load wireguard client public key from file
-  slurp:
-    src: "/etc/wireguard/clients/{{ item.name }}/publickey"
-  register: result
-
-- name: Set wireguard client public key var
-  set_fact:
-    publickey: "{{ result.content | b64decode | trim }}"
-
-  # add keys to dict in list
-- name: Set wireguard client private key var
+- name: "Set {{ client }} wireguard public key var"
   set_fact:
     wireguard_clients: "{{ wireguard_clients
-      | rejectattr('name', 'equalto', item.name)
-      | list + [ item | combine({ 'private_key': privatekey }, { 'public_key': publickey }) ] }}"
+      | rejectattr('name', 'equalto', client.name)
+      | list + [ item | combine({ 'public_key': public_key }) ] }}"
