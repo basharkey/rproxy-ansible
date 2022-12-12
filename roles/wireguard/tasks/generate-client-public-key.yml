@@ -1,0 +1,15 @@
+---
+- name: "Generate {{ client.name }} wireguard public key"
+  shell: "echo {{ client.private_key }} | wg pubkey"
+  register: public_key
+- set_fact:
+    public_key: "{{ public_key.stdout }}"
+
+- name: "Set {{ client.name }} wireguard public key var"
+  set_fact:
+    wireguard_clients: "{{ wireguard_clients
+      | rejectattr('name', 'equalto', client.name)
+      | list + [ client | combine({ 'public_key': public_key }) ] }}"
+
+- debug:
+    var: public_key 

@@ -7,8 +7,7 @@ PostUp = nft add rule ip filter forward iifname %i accept; nft add rule ip filte
 PostDown = nft -f /etc/nftables.conf
 {% for client in wireguard_clients %}
 
-[Peer]
-# {{ client.name }}
+[Peer] # {{ client.name }}
 # IP(s) peer is allowed to assume
 AllowedIPs = {{ client.address }}/32
 PublicKey = {{ client.public_key }}

@@ -10,14 +10,12 @@
     - name: Generate wireguard server private key
       command: wg genkey
       register: wireguard_server_private_key
-    - set_fact:
-        wireguard_server_private_key: wireguard_server_private_key.result
 
 - name: Generate wireguard server public key
   shell: "echo {{ wireguard_server_private_key }} | wg pubkey"
   register: wireguard_server_public_key
 - set_fact:
-    wireguard_server_public_key: wireguard_server_public_key.result
+    wireguard_server_public_key: "{{ wireguard_server_public_key.stdout }}"
 
 - name: Create wireguard client config directory
   file:
@@ -25,13 +23,19 @@
     state: directory
     mode: 0700
 
-- name: Generate wireguard client keys 
-  include_tasks: generate-client-keys.yml
+- name: Generate wireguard clients private keys 
+  include_tasks: generate-client-private-key.yml
   loop: "{{ wireguard_clients }}"
   loop_control:
     loop_var: client
 
-- name: Template wireguard client configs
+- name: Generate wireguard clients public keys 
+  include_tasks: generate-client-public-key.yml
+  loop: "{{ wireguard_clients }}"
+  loop_control:
+    loop_var: client
+
+- name: Template wireguard clients configs
   template:
     src: client-wg0.conf.j2
     dest: "/etc/wireguard/clients/{{ client.name }}-wg0.conf"
@@ -54,7 +58,7 @@
     state: present
     reload: yes
 
-- name: Start and enable wireguard server systemd sevice
+- name: Start and enable wireguard service
   systemd:
     daemon_reload: yes
     name: wg-quick@wg0.service
