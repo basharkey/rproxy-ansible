@@ -22,7 +22,7 @@
     dest: /etc/nginx/letsencrypt.conf
     mode: 0644
 
-- name: Template sites nginx config
+- name: Template nginx site configs
   template:
     src: site.conf.j2
     dest: "/etc/nginx/conf.d/{{ site.sub_domain }}.conf"
@@ -31,41 +31,20 @@
   loop_control:
     loop_var: site
 
-- name: Remove sites from hosts file
-  lineinfile:
-    path: /etc/hosts
-    regexp: ".*# rproxy managed$"
-    state: absent
-
-- name: Add sites to hosts file
-  include_tasks: add-site.yml
-  loop: "{{ sites }}"
-  loop_control:
-    loop_var: site
-
-- name: Make nginx ssl directory
-  file:
-    path: /etc/nginx/ssl/
-    state: directory
-    mode: 0755
-
-- name: Copy ssl_verify_client ca cert
-  copy:
-    src: ca.crt
-    dest: /etc/nginx/ssl/ca.crt
-    mode: 0644
-
-- name: Copy custom nginx service file
-  copy:
-    src: nginx.service
-    dest: /etc/systemd/system/nginx.service
-    mode: 0644
-
-- name: Start and enable systemd-resolved service
-  systemd:
-    name: systemd-resolved.service
-    state: started
-    enabled: yes
+- name: Copy ca verification cert
+  when: ca_certificate is defined
+  block:
+    - name: Make nginx ssl directory
+      file:
+        path: /etc/nginx/ssl/
+        state: directory
+        mode: 0755
+    
+    - name: Copy ssl_verify_client ca cert
+      copy:
+        src: "{{ ca_certificate }}"
+        dest: /etc/nginx/ssl/ca.crt
+        mode: 0644
 
 - name: Restart and enable nginx service
   systemd:

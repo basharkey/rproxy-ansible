@@ -23,6 +23,10 @@ server {
 
 {% endif %}
     location / {
-        proxy_pass {{ site.proxy_pass }};
+{% if site.proxy_https is defined and site.proxy_https %}
+        proxy_pass https://{{ site.proxy_host }};
+{% else %}
+        proxy_pass http://{{ site.proxy_ }};
+{% endif %}
     }
 }
