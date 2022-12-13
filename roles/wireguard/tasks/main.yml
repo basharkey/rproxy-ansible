@@ -4,13 +4,6 @@
     name: wireguard
     state: present
 
-- name: Create wireguard server private key
-  when: wireguard_sever_private_key is not defined
-  block:
-    - name: Generate wireguard server private key
-      command: wg genkey
-      register: wireguard_server_private_key
-
 - name: Generate wireguard server public key
   shell: "echo {{ wireguard_server_private_key }} | wg pubkey"
   register: wireguard_server_public_key
@@ -22,12 +15,6 @@
     path: "/etc/wireguard/clients"
     state: directory
     mode: 0700
-
-- name: Generate wireguard clients private keys 
-  include_tasks: generate-client-private-key.yml
-  loop: "{{ wireguard_clients }}"
-  loop_control:
-    loop_var: client
 
 - name: Generate wireguard clients public keys 
   include_tasks: generate-client-public-key.yml

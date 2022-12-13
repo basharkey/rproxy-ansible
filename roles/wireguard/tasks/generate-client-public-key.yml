@@ -10,6 +10,3 @@
     wireguard_clients: "{{ wireguard_clients
       | rejectattr('name', 'equalto', client.name)
       | list + [ client | combine({ 'public_key': public_key }) ] }}"
-
-- debug:
-    var: public_key 
