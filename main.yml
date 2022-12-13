@@ -6,5 +6,5 @@
     - aws-cli
     - aws-ddns
     - nginx
-    - firewall
+    - nftables
     - wireguard

@@ -29,5 +29,5 @@
   systemd:
     daemon_reload: yes
     name: aws-ddns.timer
-    state: Restarted
+    state: restarted
     enabled: yes

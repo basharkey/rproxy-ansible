@@ -1,4 +1,9 @@
 ---
+- name: Install zip
+  apt:
+    name: zip
+    state: present
+
 - name: Check if aws cli is installed
   stat:
     path: /usr/local/bin/aws
