@@ -95,11 +95,11 @@ Client definition examples in [hosts.yml](https://github.com/basharkey/rproxy-an
 wireguard_clients:
   - { name: client1,
         address: 192.168.2.2,
-        allowed_ips: "{{ wireguard_server_internal_address }}/32, {{ wireguard_internal_network  }}"
+        allowed_ips: "{{ wireguard_server_address }}/32, {{ wireguard_internal_network  }}"
     }
   
   - { name: client2,
       address: 192.168.2.3,
-      allowed_ips: "{{ wireguard_server_internal_address }}/32, {{ wireguard_internal_network  }}"
+      allowed_ips: "{{ wireguard_server_address }}/32, {{ wireguard_internal_network  }}"
     }
 ```

@@ -1,6 +1,6 @@
 [Interface]
 # address of vpn server on vpn subnet
-Address = {{ wireguard_server_internal_address }}/24
+Address = {{ wireguard_server_address }}/24
 ListenPort = {{ wireguard_server_port }}
 PrivateKey = {{ wireguard_server_private_key }}
 PostUp = nft add rule ip filter forward iifname %i accept; nft add rule ip filter forward oifname %i accept; nft add rule ip nat postrouting oifname {{ ansible_default_ipv4.interface }} masquerade
