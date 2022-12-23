@@ -27,8 +27,7 @@
    route53:ChangeResourceRecordSets
    ```
 2. Copy CA certificate to root of repo if `ssl_verify_client: yes` is enabled for any sites
-3. `make encrypt_string` to encrypt Wireguard client private keys for [hosts.yml](hosts.yml)
-4. Update variables in [hosts.yml](hosts.yml)
-5. Update variables in [vault.yml](vault.yml)
-6. `make vault` to encrypt [vault.yml](vault.yml)
-7. `make install` to run playbook
+3. Update variables in [hosts.yml](hosts.yml)
+4. Update variables in [vault.yml](vault.yml)
+5. `make vault` to encrypt [vault.yml](vault.yml)
+6. `make install` to run playbook
