@@ -1,9 +1,9 @@
 [Unit]
-Description=certbot-renew timer
+Description=Monthly letsencrypt certificate renewal
 
 [Timer]
 Unit=certbot-renew.service
-OnCalendar=daily
+OnCalendar=monthly
 
 [Install]
 WantedBy=timers.target

@@ -1,8 +1,7 @@
 [Unit]
-Description=certbot certificate renewal
+Description=Renews letsencrypt certificates
 After=network-online.target
 Wants=network-online.target
-Wants=certbot-renew.timer
 
 [Service]
 Type=simple

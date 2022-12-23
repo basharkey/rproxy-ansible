@@ -2,22 +2,22 @@
 
 flush ruleset
 
-table inet filter {
+table ip filter {
     chain input {
-        type filter hook input priority 0; policy drop;
+        type filter hook input priority filter; policy drop;
         iif "lo" accept
         icmp type echo-request accept
         tcp dport 22 accept
         tcp dport 80 accept
         tcp dport 443 accept
         udp dport {{ wireguard_server_port }} accept
-        ct state related,established accept
+        ct state established,related accept
     }
     chain forward {
-        type filter hook forward priority 0; policy drop;
+        type filter hook forward priority filter; policy drop;
     }
     chain output {
-        type filter hook output priority 0; policy accept;
+        type filter hook output priority filter; policy accept;
     }
 }
 
