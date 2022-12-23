@@ -26,8 +26,7 @@
    route53:GetChange
    route53:ChangeResourceRecordSets
    ```
-2. Copy CA certificate to root of repo if `ssl_verify_client: yes` is enabled for any sites
-3. Update variables in [hosts.yml](hosts.yml)
-4. Update variables in [vault.yml](vault.yml)
-5. `make vault` to encrypt [vault.yml](vault.yml)
-6. `make install` to run playbook
+2. Update variables in [hosts.yml](hosts.yml)
+3. Update variables in [vault.yml](vault.yml)
+4. `make vault` to encrypt [vault.yml](vault.yml)
+5. `make install` to run playbook
