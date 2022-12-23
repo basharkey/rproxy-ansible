@@ -26,7 +26,8 @@
    route53:GetChange
    route53:ChangeResourceRecordSets
    ```
-2. Update variables in [hosts.yml](hosts.yml)
-3. Update variables in [vault.yml](vault.yml)
-4. `make vault` to encrypt [vault.yml](vault.yml)
-5. `make install` to run playbook
+2. `make encrypt_string` to encrypt Wireguard client private keys for [hosts.yml](hosts.yml)
+3. Update variables in [hosts.yml](hosts.yml)
+4. Update variables in [vault.yml](vault.yml)
+5. `make vault` to encrypt [vault.yml](vault.yml)
+6. `make install` to run playbook
