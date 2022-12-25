@@ -1,6 +1,7 @@
 [Interface]
 # IP client assumes on connection
 Address = {{ client.address }}/24
+DNS = {{ wireguard_internal_dns }}
 PrivateKey = {{ client.private_key }}
 
 [Peer]
