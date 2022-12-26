@@ -6,6 +6,18 @@
       - python3-pip
     state: present
 
+- name: Create aws config dir
+  file:
+    path: /root/.aws
+    state: directory
+    mode: 0755
+
+- name: Template aws credentials config
+  template:
+    src: credentials.j2
+    dest: /root/.aws/credentials
+    mode: 0600
+
 - name: Install aws-ddns dependencies
   pip:
     requirements: https://raw.githubusercontent.com/basharkey/aws-ddns/main/requirements.txt
