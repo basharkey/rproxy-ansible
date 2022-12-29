@@ -32,7 +32,7 @@
   template:
     src: "{{ item }}.j2"
     dest: "/etc/systemd/system/{{ item }}"
-    mode: 0755
+    mode: 0644
   loop:
     - aws-ddns.service
     - aws-ddns.timer
