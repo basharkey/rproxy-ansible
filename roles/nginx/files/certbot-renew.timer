@@ -1,9 +1,0 @@
-[Unit]
-Description=Monthly letsencrypt certificate renewal
-
-[Timer]
-Unit=certbot-renew.service
-OnCalendar=monthly
-
-[Install]
-WantedBy=timers.target
